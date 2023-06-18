@@ -28,9 +28,11 @@ ETL_Project
 
 Use `.env` file to configure environment.
 Provide `POSTGRES_USER` , `POSTGRES_PASSWORD`, `POSTGRES_DB` and `POSTGRES_HOST` variable to run airflow locally.
+
 This values are preconfigured for running in docker container.
 
 Default Admin Username - `retail_user`
+
 Default Admin Password - `retail_password`
 
 ## Prerequisites
@@ -44,12 +46,15 @@ To start the project, run following command -
 sudo docker compose up
 ```
 This will build Dockerfile image and download PostgreSQL image and start the project.
+
 Airflow Web UI will available on `http://localhost:8080/`
+
 Use Default admin username and password to login.
 
 ## Project Description
 
 The dataset is picked from https://www.kaggle.com/datasets/kyanyoga/sample-sales-data 
+
 Read about CSV dataset schema here - https://www.kaggle.com/datasets/kyanyoga/sample-sales-data 
 
 ### Data Source
