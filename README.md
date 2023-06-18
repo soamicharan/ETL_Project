@@ -27,7 +27,6 @@ ETL_Project
 ## Configuration
 
 Use `.env` file to configure environment.
-Provide `POSTGRES_USER` , `POSTGRES_PASSWORD`, `POSTGRES_DB` and `POSTGRES_HOST` variable to run airflow locally.
 
 This values are preconfigured for running in docker container.
 
@@ -39,17 +38,33 @@ Default Admin Password - `retail_password`
 
 - Require `docker` command to run project.
 
-## Run Project
+## Deployment
 
-To start the project, run following command - 
+Provide `POSTGRES_USER` , `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_HOST` and `AIRFLOW__DATABASE__SQL_ALCHEMY_CONN` environment variables for custom deployment of Docker.
+
+Also run the following command as part of initialization before airflow start running -
+```bash
+airflow db init
+airflow connections add 'postgres_retail' --conn-uri "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:5432/$POSTGRES_DB"
+```
+This will initialize airflow database and add a postgresql connection `postgres_retail` using `POSTGRES_USER` , `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_HOST` environment variables as database credentials.
+
+If you run project using docker compose then these commands are added during initialization phase.'
+
+If you running the project on local using docker compose then all environment variables will pick from `.env` file which is configured for local docker compose deployment. So nothing extra need to configure.
+## Project Execution
+
+To start the project on local, run following command - 
 ```bash
 sudo docker compose up
 ```
-This will build Dockerfile image and download PostgreSQL image and start the project.
+This will build Dockerfile image and download PostgreSQL image and start the project on local.
 
 Airflow Web UI will available on `http://localhost:8080/`
 
 Use Default admin username and password to login.
+
+`retail_etl_pipeline` DAG will appear on Web UI. You can unpause it to start running the DAG on daily basis.
 
 ## Project Description
 
@@ -62,7 +77,7 @@ Read about CSV dataset schema here - https://www.kaggle.com/datasets/kyanyoga/sa
 - We are assuming that all unprocessed CSV dataset files are stored OR uploaded to `data/retail/raw` folder.
 - We store OR uploaded processed CSV dataset file in `data/retail/cleaned` folder.
 - We have 2 tables in a PostgreSQL database `retail_db`
-    - `processed_files` - It contains raw CSV dataset file names which are processed successfully.
+    - `processed_files` - It contains raw CSV dataset file names which are processed successfully. This guarentees that you CSV files will process ATLEAST once and ATMOST once. If there is any bugs encountered during ETL, after bug resolved you can run the ETL by executing DAG manually OR on next schedule, DAG will run for all unprocessed CSV files.
     - `retail_sales` - It contains processed CSV dataset data.
 
 ### Extraction Procedure Steps
